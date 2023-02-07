@@ -18,16 +18,18 @@ int main (int argc, char** argv)
     printf("*                             PROTOCOLE MODBUS                             *\n");
     printf("****************************************************************************\n");
     printf("baudrate: %d, bite size: %d, bit parity: %d, stop bit: %d, regulator adress: %d", SRL_BAUDRATE, SRL_BYTE_SZ, SRL_PARITY, SRL_STOPBIT, MODBUSREG_ADRESS);
-    
+    scanf("%d", &isSoketPort);    
 
     //*******************************************************************************
         // Creation et ouverture du support de communication
-
+    if (isSoketPort)
+        idConnexionSocket = connectionTCPIpPort();
+    else
         handleSerialPort = connectionSerialPort();
 
     //*******************************************************************************
 
-    if (handleSerialPort)
+    if (handleSerialPort || (idConnexionSocket != INVALID_SOCKET))
     {
         TypeRequest requestType = NO_REQUEST;
         TypeVal typeVal = TYPE_SHORT;
@@ -48,17 +50,14 @@ int main (int argc, char** argv)
             ErrorComm codret = ERRORCOMM_ERROR;
 
             printf("\n****************************************************************************\n");
-            printf("   1. Demande de lecture.\n");
-            printf("   2. Demande d'ecriture.\n");
-            printf("   3. Quitter.\n");
-            printf("Que souhaitez-vous faire?\n");
+            printf("   1. Ask to read.\n");
+            printf("   2. Ask to write.\n");
+            printf("   3. Quit.\n");
+            printf("What do you want to do?\n");
             scanf("%d", &requestType);
 
             //*******************************************************************************
-            // Creation des trames de requete Modbus et envoie de ces trames
-
-            /* Checking if the request type is read or write. If it is, it will call the function
-            createRequestTrame. If it is not, it will continue. */
+            
             if (requestType == REQUEST_READ || requestType == REQUEST_WRITE)
                 codret = createRequestTrame(requestType, trames);
             else
@@ -110,7 +109,7 @@ int main (int argc, char** argv)
                     for  (i = 0; i < trames[channel].lengthTrameReceived; i++)
                         printf("%02X ",(unsigned char)trames[channel].trameReceived[i]);
                     printf("\n");
-
+                
                     
                     /* Parsing the response from the Modbus device. */
                     codret = parseModbusResponse(trames[channel].trameReceived, trames[channel].lengthTrameReceived, requestType, typeVal);
@@ -131,7 +130,7 @@ terminateSerialPort(handleSerialPort);
         //*******************************************************************************
     }
     else
-        printf("Echec de connexion.");
+        printf("Connection Failed.");
 
     return 0;
 }
