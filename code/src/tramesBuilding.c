@@ -4,7 +4,7 @@
 
 #include "Modbus.h"
 #include "tramesBuilding.h"
-
+int GlobaleAdresseRegulatorModbus = 1;
 void printState(ErrorComm codret)
 {
 	switch(codret)
@@ -31,8 +31,15 @@ void printState(ErrorComm codret)
 	}
 	return;
 }
+SOCKET connectionTCPIpPort()
+{
+    BOOL connexionOk = FALSE;
+    SOCKET idConnexionSocket = INVALID_SOCKET;
 
+    // A COMPLETER
 
+    return idConnexionSocket;
+}
 /**
  * It opens a serial port, sets the parameters, and returns the handle
  * 
