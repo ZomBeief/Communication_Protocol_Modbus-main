@@ -5,9 +5,6 @@
 #include "Modbus.h"
 #include "tramesBuilding.h"
 
-
-int Globale_ip_clientserver_choice;
-
 void printState(ErrorComm codret)
 {
 	switch(codret)
@@ -46,19 +43,10 @@ HANDLE connectionSerialPort()
     BOOL connexionOk = FALSE;
     HANDLE handleSerialPort = NULL;
 
-	/* Asking the user to enter the COM port number. */
-	printf("\nnumero de port com? : ");
 	int com_port;
-	scanf("%d",&com_port);
-
-	/* Creating a serial port. */
+	scanf("COM : %d\n",&com_port);
 	handleSerialPort = createSerialPort(com_port);
-
-	/* Setting the parameters of the serial port. */
-	if (setParamSerialPort(handleSerialPort, SRL_BAUDRATE, SRL_BYTE_SZ, SRL_PARITY, SRL_STOPBIT) == 0)
-		return NULL;
-
-    return handleSerialPort;
+	return (setParamSerialPort(handleSerialPort, SRL_BAUDRATE, SRL_BYTE_SZ, SRL_PARITY, SRL_STOPBIT) == 0) NULL : handleSerialPort;
 }
 
 
@@ -76,18 +64,12 @@ ErrorComm createRequestTrame(TypeRequest i_requestType, TRAMES_HANDLER * trames)
 	int startAdress, nbParamsToread;
 
 	switch(i_requestType)
-	{
-		// Demande de lecture:
+	{		
 		case REQUEST_READ:{
-			printf("\n DEMANDE DE LECTURE\n");
+            scanf("Start address : %d\n", &startAdress);
 
-			printf("\nA partir de quelle adresse souhaitez-vous lire? : ");
-            scanf("%d", &startAdress);
-
-			/* Asking the user to enter the number of values to read. */
 			int nb_parameters;
-			printf("\nnombre de valeurs a lire: ");
-            scanf("%d", &nb_parameters);
+            scanf("Count : %d\n", &nb_parameters);
 
 			/* Creating the trames to send to the regulator. */
 			for (int channel=0; channel < MODBUSREG_CHANNEL_SZ; channel++)
@@ -95,31 +77,24 @@ ErrorComm createRequestTrame(TypeRequest i_requestType, TRAMES_HANDLER * trames)
 			
 			break;}
 
-		// Deamnde d'ecriture
 		case REQUEST_WRITE:{
-			printf("\n DEMANDE D'ECRITURE\n");
-
-			printf("\nA partir de quelle adresse souhaitez-vous ecrire? : ");
-            scanf("%d", &startAdress);
+			scanf("Start address : %d\n", &startAdress);
 
 			/* Asking the user to enter the number of values to write. */
 			int values_sz;
 			do
 			{
-				printf("\nEntre le nombre de valeurs a ecrire? : ");
-				scanf("%d",&values_sz);
-
+				scanf("Count : %d\n",&values_sz);
 			} while (values_sz > ARRAY_MAX_SIZE); //array size limit
 			
-
 			/* Asking the user to enter the values to write. */
 			short values_arr[ARRAY_MAX_SIZE];
 			for (int val_arr_index = 0; val_arr_index < values_sz; val_arr_index++)
 			{
 				do
 				{
-					printf("\nEnter the value [%d]: ",val_arr_index);
-					scanf("%d",&values_arr[val_arr_index]);
+					printf("Enter the value [%d]: \n",val_arr_index);
+					scanf("%d\n",&values_arr[val_arr_index]);
 
 				}while (abs(values_arr[val_arr_index]) > 32767); //type limit
 			}
@@ -127,14 +102,12 @@ ErrorComm createRequestTrame(TypeRequest i_requestType, TRAMES_HANDLER * trames)
 			/* Creating the trames to send to the regulator. */
 			for (int channel=0; channel < MODBUSREG_CHANNEL_SZ; channel++)
 				trames[channel].lengthTrameToSend = makeTrameEcrModBusFromShortTab(MODBUSREG_ADRESS, MODBUS_FUNCTION_WRITE_WORDS, startAdress + (MODBUSREG_OFFSET * channel), values_arr, values_sz, trames[channel].trameToSend, INTEL);
-
 			break;}
 		default:
-			printf("\nimpossible choice...");
+			printf("Error\n");
 			return ERRORCOMM_EVENT;
 			break;
 	}
-
 	return ERRORCOMM_NOERROR;
 }
 
@@ -153,7 +126,6 @@ ErrorComm parseModbusResponse(char* i_trameReceive, int i_lengthTrameReceived, T
 		case TYPE_SHORT:
 			
 			short readen_value= 0;
-
 			/* Parsing the received trame. */
 			codret = parseTrameModBus(i_trameReceive, i_lengthTrameReceived, value_buffer, &nb_values_buffer, &adress_buffer, &codeFunction_buffer, INTEL);
 
@@ -163,11 +135,8 @@ ErrorComm parseModbusResponse(char* i_trameReceive, int i_lengthTrameReceived, T
 				/* Converting the received value from the PLC to a short value. */
 				readen_value = ModBusShortAsciiToIeee(&value_buffer[nb_param*2], INTEL);
 
-				printf("\nReceived value = %d", readen_value);
+				printf("Received value = %d\n", readen_value);
 			}
-			
-			
-			
 			break;
 		
 		default:
@@ -178,8 +147,5 @@ ErrorComm parseModbusResponse(char* i_trameReceive, int i_lengthTrameReceived, T
 	default:
 		break;
 	}
-
-	
-
 	return codret;
 }
