@@ -121,7 +121,7 @@ int main (int argc, char** argv)
                 }
             }
         }
-terminateSerialPort(handleSerialPort);
+        terminateSerialPort(handleSerialPort);
         //*******************************************************************************
         // Fermeture du support de communication
         
