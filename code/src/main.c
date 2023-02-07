@@ -10,7 +10,7 @@ int main (int argc, char** argv)
 {
     int isSoketPort = 0;
     BOOL connexionOk = FALSE;
-
+ 
     SOCKET idConnexionSocket = INVALID_SOCKET;
     HANDLE handleSerialPort = NULL;
 
@@ -122,7 +122,7 @@ int main (int argc, char** argv)
                 }
             }
         }
-
+terminateSerialPort(handleSerialPort);
         //*******************************************************************************
         // Fermeture du support de communication
         
