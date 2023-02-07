@@ -53,8 +53,11 @@ HANDLE connectionSerialPort()
 	int com_port;
 	scanf("COM : %d\n",&com_port);
 	handleSerialPort = createSerialPort(com_port);
-	return (setParamSerialPort(handleSerialPort, SRL_BAUDRATE, SRL_BYTE_SZ, SRL_PARITY, SRL_STOPBIT) == 0) NULL : handleSerialPort;
-}
+if (setParamSerialPort(handleSerialPort, SRL_BAUDRATE, SRL_BYTE_SZ, SRL_PARITY, SRL_STOPBIT) == 0)
+		return NULL;
+
+    return handleSerialPort;
+	}
 
 
 /**
