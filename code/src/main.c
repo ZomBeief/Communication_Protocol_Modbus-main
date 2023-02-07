@@ -27,7 +27,7 @@ int main (int argc, char** argv)
 
     //*******************************************************************************
 
-    if (handleSerialPort)
+    if (handleSerialPort || (idConnexionSocket != INVALID_SOCKET))
     {
         TypeRequest requestType = NO_REQUEST;
         TypeVal typeVal = TYPE_SHORT;
