@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#include "tramesBuilding.h"
+#include "trames.h"
 #include "Modbus.h"
 
 
@@ -68,8 +68,7 @@ int main (int argc, char** argv)
                 printState(codret);
                 break;
             }
-
-            /* Sending each trame to the Modbus device by channel */
+            
             for (int channel=0; channel < MODBUSREG_CHANNEL_SZ; channel++)
             {
                 /* Printing the trame to send. */
@@ -121,13 +120,9 @@ int main (int argc, char** argv)
                 }
             }
         }
+        
         terminateSerialPort(handleSerialPort);
-        //*******************************************************************************
-        // Fermeture du support de communication
         
-        // A COMPLETER
-        
-        //*******************************************************************************
     }
     else
         printf("Connection Failed.");

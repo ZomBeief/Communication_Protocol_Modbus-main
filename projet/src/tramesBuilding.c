@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "Modbus.h"
+
 #include "tramesBuilding.h"
 int GlobaleAdresseRegulatorModbus = 1;
 void printState(ErrorComm codret)
